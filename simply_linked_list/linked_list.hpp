@@ -1,5 +1,5 @@
 /**
- * Implementação de lista simplesmente encadeda genérica em C++
+ * Implementação de list simplesmente encaded genérica em C++
  * Autor: Philippe Matias
  */
 
@@ -30,6 +30,12 @@ namespace pm
         //construtor de cópia
         linked_list(const linked_list<T>& list)
         {
+            *this = list;
+        }
+
+        //operador de atribuição
+        auto operator = (const linked_list<T>& list) -> linked_list<T>&
+        {
             //se o sentinela não tiver sido instanciado...
             if (m_head == nullptr) m_head = new linked_list_node<T>();
             else this->clear();
@@ -37,7 +43,7 @@ namespace pm
             //se a outra lista estiver vazia, a nossa também ficará
             if (list.empty()) {
                 m_size = 0;
-                return; }
+                return *this; }
 
             linked_list_node<T>* cur = list.m_head->next;
             linked_list_node<T>* last = nullptr; //ptr para último elemento
@@ -54,6 +60,7 @@ namespace pm
             }
 
             m_size = list.m_size;
+            return *this;
         }
 
         //destructor
@@ -61,6 +68,15 @@ namespace pm
         {
             this->clear();
             delete m_head;
+        }
+
+        //obtém o último elemento
+        auto last() -> const T&
+        {
+            auto cur = m_head;
+            while (cur->next != nullptr)
+                cur = cur->next;
+            return cur->data;
         }
 
         //insere um elemento no início da lista
@@ -96,7 +112,7 @@ namespace pm
             m_size += 1;
         }
 
-        //insere no fim da lista
+        //remove elemento no inicio da lista
         void pop_front()
         {
             if (this->empty())
@@ -106,6 +122,21 @@ namespace pm
             m_head->next = temp->next;
             delete temp;
 
+            m_size -= 1;
+        }
+
+        //remove eleento no fim da lista
+        void pop_back()
+        {
+            if (this->empty())
+                return;
+
+            auto cur = m_head;
+            while (cur->next->next != nullptr)
+                cur = cur->next;
+
+            delete cur->next;
+            cur->next = nullptr;
             m_size -= 1;
         }
 
@@ -132,7 +163,7 @@ namespace pm
                 cur = cur->next;
             }
 
-            std::cout << '\n';
+            std::cout << "\n\n";
         }
 
         //tamanho e se está vazia, a lista
