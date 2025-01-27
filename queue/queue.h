@@ -23,7 +23,7 @@ namespace pm
         }
 
         /*--------------------------------------*/
-        ~queue() {}
+        ~queue() { delete m_head; }
 
         /*--------------------------------------*/
         void enqueue(const T& item)
@@ -44,7 +44,24 @@ namespace pm
         /*--------------------------------------*/
         auto dequeue() -> const T&
         {
+            if (m_size == 0) {
+                return {}
+            }
 
+            if (m_size == 1) {
+                auto data = m_head->data;
+                delete m_head;
+                m_head = m_tail = nullptr;
+                m_size = 0;
+                return data;
+            }
+
+            if (m_size > 1) {
+                auto temp = m_head;
+                auto data = temp->data;
+                m_size--;
+                return data;
+            }
         }
 
         /*--------------------------------------*/
