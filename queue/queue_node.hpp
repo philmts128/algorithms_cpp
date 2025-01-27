@@ -16,5 +16,10 @@ namespace pm
             this->data = data;
             this->next = next;
         }
+
+        /*---------------------------*/
+        ~queue_node() {
+            delete this->next;
+        }
     };
 }
