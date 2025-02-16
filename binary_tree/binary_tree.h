@@ -29,57 +29,40 @@ namespace pm
         //------------------------------------------
         ~binary_tree()
         {
-
+            if (m_root != nullptr) {
+                this->clean_data();
+            }
         }
 
         //------------------------------------------
         bool insert(const T& data)
         {
-            auto new_node = new binary_tree_node<T>(data);
-            m_size += 1;
-
             if (this->is_empty()) {
-                m_root = new_node;
+                m_root = new binary_tree_node<T>(data);
                 return true;
             }
 
             binary_tree_node<T>* curr = m_root;
-            for (;;)
+            binary_tree_node<T>* prev = nullptr;
+
+            while (curr != nullptr)
             {
-                if (data == curr->data)
-                {
-                    m_size -= 1;
+                prev = curr;
+
+                if (curr->data == data) {
                     return false;
-                }
-                else if (data > curr->data)
-                {
-                    if (curr->right == nullptr) {
-                        curr->right = new_node;
-                        return true;
-                    } else if (curr->data > data) {
-                        auto temp = curr->right;
-                        curr->right = new_node;
-                        new_node->right = temp;
-                        return true;
-                    } else {
-                        curr = curr->right;
-                    }
-                }
-                else
-                { // se data for menor
-                    if (curr->left == nullptr) {
-                        curr->left = new_node;
-                        return true;
-                    } else if (curr->data < data) {
-                        auto temp = curr->left;
-                        curr->left = new_node;
-                        new_node->left = temp;
-                        return true;
-                    } else {
-                        curr = curr->left;
-                    }
+                } else if (data > curr->data) {
+                    curr = curr->right;
+                } else {
+                    curr = curr->left;
                 }
             }
+
+            auto new_node = new binary_tree_node<T>(data);
+            if (data > prev->data)
+                prev->right = new_node;
+            else
+                prev->left = new_node;
 
             return true;
         }
@@ -91,7 +74,7 @@ namespace pm
         //------------------------------------------
         void print()
         {
-            post_order(m_root, [](binary_tree_node<T>* n) {
+            in_order(m_root, [](binary_tree_node<T>* n) {
                 std::cout <<  n->data << " ";
             });
 
@@ -102,7 +85,11 @@ namespace pm
         template <typename F>
         void pre_order(pm::binary_tree_node<T>* tree, F action)
         {
-
+            if (tree != nullptr) {
+                action(tree);
+                pre_order(tree->left, action);
+                pre_order(tree->right, action);
+            }
         }
 
         //------------------------------------------
@@ -117,6 +104,17 @@ namespace pm
         }
 
         //------------------------------------------
+        template <typename F>
+        void in_order(pm::binary_tree_node<T>* tree, F action)
+        {
+            if (tree != nullptr) {
+                in_order(tree->left, action);
+                action(tree);
+                in_order(tree->right, action);
+            }
+        }
+
+        //------------------------------------------
         void copy_data(const binary_tree& tree)
         {
 
@@ -125,7 +123,9 @@ namespace pm
         //------------------------------------------
         void clean_data()
         {
-
+            this->post_order(m_root, [](binary_tree_node<T>* n) {
+                delete n;
+            });
         }
     };
 }
