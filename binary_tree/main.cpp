@@ -1,17 +1,31 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 #include "binary_tree.h"
 
 int main()
 {
-    pm::binary_tree<int> tree;
-    tree.insert(1);
-    tree.insert(3);
-    tree.insert(4);
-    tree.insert(6);
-    tree.insert(8);
-    tree.insert(9);
-    tree.print();
+    pm::binary_tree<int> t;
+    t.insert(5);
+    t.insert(7);
+    t.insert(9);
+    t.insert(2);
+    t.insert(8);
+    t.insert(999);
+    t.insert(120);
+    t.insert(23);
+    t.print();
+
+    pm::binary_tree<string> fruits;
+    fruits.insert("apple");
+    fruits.insert("pear");
+    fruits.insert("tomato");
+    fruits.insert("grape");
+    fruits.insert("watermelon");
+    fruits.insert("banana");
+    fruits.print();
+
+    printf("\n\n");
     return 0;
 }
