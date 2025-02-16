@@ -1,20 +1,20 @@
 #pragma once
 
 
-namespace mx
+namespace pm
 {
-    /*------------------------------------------*/
+    //------------------------------------------
     template <typename T>
     struct binary_tree_node
     {
-        /*------------------------------------------*/
+        //------------------------------------------
+        T data;
         binary_tree_node* left  { nullptr };
         binary_tree_node* right { nullptr };
-        T data;
-        
-        /*------------------------------------------*/
-        binary_tree_node(const T& data,
-            binay_tree_node* left = nullptr, binary_tree_node* right = nullptr)
-            : left(this->left), right(this->right) {}
+
+        //------------------------------------------
+        binary_tree_node(const T& data, binary_tree_node* left = nullptr,
+                         binary_tree_node* right = nullptr)
+                         : data(data), left(left), right(right) {}
     };
 }
