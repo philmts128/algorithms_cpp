@@ -111,8 +111,8 @@ namespace pm
         {
             if (tree != nullptr) {
                 post_order(tree->left, action);
-                action(tree);
                 post_order(tree->right, action);
+                action(tree);
             }
         }
 
