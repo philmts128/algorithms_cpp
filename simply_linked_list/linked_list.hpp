@@ -112,9 +112,17 @@ namespace pm
                 k += 1;
             }
 
-            auto temp = current->next;
-            current->next = new linked_list_node<T>(item);
-            current->next->next = temp;
+            //isso deverá apontar para o next do novo nó a ser inserido
+            linked_list_node<T>* temp = current->next;
+
+            //cria novo nó
+            auto new_node = new linked_list_node<T>(item);
+
+            //aqui a gente faz o sucessor do nó que  gente achou apontar para um novo nó
+            current->next = new_node;
+
+            //agora o new_node aponta para o sucessor antigo, que aponta para o restante da lista
+            new_node->next = temp;
 
             m_size += 1;
         }
