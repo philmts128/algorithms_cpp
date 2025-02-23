@@ -1,5 +1,5 @@
 /**
- * Implementação de list simplesmente encaded genérica em C++
+ * Implementação de list simplesmente encadeda genérica em C++
  * Autor: Philippe Matias
  */
 
@@ -12,65 +12,48 @@
 
 namespace pm
 {
+    /*-----------------------------------------------*/
     template <typename T>
     class linked_list
     {
     private:
+        /*-----------------------------------------------*/
         int m_size; //tamanho da lista
         linked_list_node<T>* m_head { nullptr }; //nó sentinela
 
     public:
-        //contrutor padrão inicia uma lista vazia
+        /*-----------------------------------------------*/
         linked_list()
         {
             m_size = 0;
             m_head = new linked_list_node<T>();
         }
 
-        //construtor de cópia
+        /*-----------------------------------------------*/
         linked_list(const linked_list<T>& list)
         {
-            *this = list;
+            m_head = new linked_list_node<T>();
+            this->copy_data(list);
         }
 
-        //operador de atribuição
+        /*-----------------------------------------------*/
         auto operator = (const linked_list<T>& list) -> linked_list<T>&
         {
-            //se o sentinela não tiver sido instanciado...
             if (m_head == nullptr) m_head = new linked_list_node<T>();
             else this->clear();
 
-            //se a outra lista estiver vazia, a nossa também ficará
-            if (list.empty()) {
-                m_size = 0;
-                return *this; }
-
-            linked_list_node<T>* cur = list.m_head->next;
-            linked_list_node<T>* last = nullptr; //ptr para último elemento
-
-            //adiciona novo elemento apens no fim da nossa lista
-            m_head->next = new linked_list_node<T>(cur->data);
-            last = m_head->next;
-            cur = cur->next;
-
-            while (cur != nullptr) {
-                last->next = new linked_list_node<T>(cur->data);
-                last = last->next;
-                cur = cur->next;
-            }
-
-            m_size = list.m_size;
+            this->copy_data(list);
             return *this;
         }
 
-        //destructor
+        /*-----------------------------------------------*/
         ~linked_list()
         {
             this->clear();
             delete m_head;
         }
 
-        //obtém o último elemento
+        /*-----------------------------------------------*/
         auto last() -> const T&
         {
             auto cur = m_head;
@@ -79,7 +62,7 @@ namespace pm
             return cur->data;
         }
 
-        //insere um elemento no início da lista
+        /*-----------------------------------------------*/
         void push_front(const T& item)
         {
             //novo elemento
@@ -92,7 +75,7 @@ namespace pm
             m_size += 1;
         }
 
-        //insere um elemento na parte final da lista
+        /*-----------------------------------------------*/
         void push_back(const T& item)
         {
             //se estiver vzia, add novo elemento com push_front
@@ -112,7 +95,31 @@ namespace pm
             m_size += 1;
         }
 
-        //remove elemento no inicio da lista
+        /*-----------------------------------------------*/
+        void insert(const T& item, int position)
+        {
+            if (position < 0 || position > (m_size-1)) {
+                std::cerr << "posicao invalida!\n";
+                return;
+            }
+
+            int k = 0; //conta a posição correta
+
+            //acha a posição correta e incrementa o contador
+            linked_list_node<T>* current = m_head;
+            while (current->next != nullptr && k != position) {
+                current = current->next;
+                k += 1;
+            }
+
+            auto temp = current->next;
+            current->next = new linked_list_node<T>(item);
+            current->next->next = temp;
+
+            m_size += 1;
+        }
+
+        /*-----------------------------------------------*/
         void pop_front()
         {
             if (this->empty())
@@ -125,7 +132,7 @@ namespace pm
             m_size -= 1;
         }
 
-        //remove eleento no fim da lista
+        /*-----------------------------------------------*/
         void pop_back()
         {
             if (this->empty())
@@ -140,7 +147,74 @@ namespace pm
             m_size -= 1;
         }
 
-        //deleta todos os itens da lista
+        /*-----------------------------------------------*/
+        void remove(const T& item)
+        {
+            auto cur = m_head;
+
+            while (cur->next != nullptr)
+            {
+                if (cur->next->data == item) {
+                    auto temp = cur->next;
+                    cur->next = temp->next;
+                    delete temp;
+                    m_size -= 1;
+                    continue;
+                }
+
+                cur = cur->next;
+            }
+        }
+
+        /*-----------------------------------------------*/
+        void reverse()
+        {
+            linked_list_node<T>* prev = nullptr;
+            linked_list_node<T>* next = nullptr;
+            linked_list_node<T>* curr = m_head->next;
+
+            while (curr != nullptr) {
+                next = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = next;
+            }
+
+            m_head->next = prev;
+        }
+
+        /*-----------------------------------------------*/
+        void concat(linked_list& list)
+        {
+            //'navega' até último nó da lista
+            auto last = m_head;
+            while (last->next != nullptr)
+                last = last->next;
+
+            //reliza a junção entre duas listas
+            last->next = list.m_head->next;
+            list.m_head->next = nullptr;
+
+            //atualiza tamanhos
+            m_size += list.m_size;
+            list.m_size = 0;
+        }
+
+        /*-----------------------------------------------*/
+        void swap(linked_list& list)
+        {
+            //troca tamanhos
+           int temp_size = m_size;
+           m_size = list.m_size;
+           list.m_size = temp_size;
+
+           //troca sentinelas
+           auto temp_head = m_head;
+           m_head = list.m_head;
+           list.m_head = temp_head;
+        }
+
+        /*-----------------------------------------------*/
         void clear()
         {
             m_size = 0;
@@ -153,7 +227,31 @@ namespace pm
             }
         }
 
-        //imprime todos os elementos da lista
+        /*-----------------------------------------------*/
+        bool operator == (const linked_list<T>& list) const
+        {
+            if (m_size != list.m_size)
+                return false;
+
+            linked_list_node<T>* n1 = m_head->next;
+            linked_list_node<T>* n2 = list.m_head->next;
+
+            while (n1 != nullptr) {
+                if (n1->data != n2->data)
+                    return false;
+                n1 = n1->next;
+                n2 = n2->next;
+            }
+
+            return true;
+        }
+
+        /*-----------------------------------------------*/
+        bool operator != (const linked_list<T>& list) const {
+            return !(*this == list);
+        }
+
+        /*-----------------------------------------------*/
         void print()
         {
             auto cur = m_head->next;
@@ -166,9 +264,24 @@ namespace pm
             std::cout << "\n\n";
         }
 
-        //tamanho e se está vazia, a lista
+        /*-----------------------------------------------*/
         int size() const { return m_size; }
         bool empty() const  { return (m_size == 0); }
+
+    private:
+        /*-----------------------------------------------*/
+        void copy_data(const linked_list<T>& list)
+        {
+            auto cur = list.m_head->next;
+            auto last = m_head;
+            while (cur != nullptr) {
+                last->next = new linked_list_node<T>(cur->data);
+                cur = cur->next;
+                last = last->next;
+            }
+
+            m_size = list.m_size;
+        }
     };
 }
 
