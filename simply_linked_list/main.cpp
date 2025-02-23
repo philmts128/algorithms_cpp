@@ -1,47 +1,31 @@
-/**
- * Teste de lista simplesmente encadeada
- * Autor: Philippe Matias
-*/
-
+#include <vector>
+#include <string>
 #include <iostream>
 using namespace std;
 
 #include "linked_list.h"
 
+
 int main()
 {
-    pm::linked_list<int> ints;
+    pm::linked_list<int> l;
+    for (int i = 1; i <= 10; ++i)
+        l.push_back(i);
 
-    for (int i = 0; i <= 10; ++i)
-        ints.push_back(i);
+    l.insert(999, 8);
+    l.insert(1000, 0);
+    l.print();
 
-    pm::linked_list<int> other = ints;
+    pm::linked_list<string> fruits;
+    fruits.push_back("apple");
+    fruits.push_back("watermelon");
+    fruits.push_back("guava");
 
-    cout << "Utimo: " << other.last() << '\n';
-    cout << "Lista originl: ";
-    other.print();
+    fruits.insert("strawberry", 0);
+    fruits.insert("orange", 1);
 
-    other.pop_front();
-    other.pop_front();
-    cout << "Utimo: " << other.last() << '\n';
-    cout << "Depois de apagar 2 primeiros items: ";
-    other.print();
+    fruits.print();
 
-    other.push_back(999);
-    other.push_back(1250);
-    other.push_front(500);
-    cout << "Utimo: " << other.last() << '\n';
-    cout << "Depois de add. 2 items no fim e a 500 no primeiro: ";
-    other.print();
 
-    ints = other;
-    ints.pop_back();
-    ints.pop_back();
-    ints.push_back(44);
-    cout << "Utimo: " << ints.last() << '\n';
-    cout << "Ints depois de copiar other e apos apagar dois ultimos itens e add 44: ";
-    ints.print();
-
-    cout << "\n\n";
     return 0;
 }
