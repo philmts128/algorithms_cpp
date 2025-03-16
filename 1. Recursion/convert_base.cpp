@@ -1,5 +1,5 @@
 /**
- * Converte inteiro em decimal para base binária.
+ * Converte inteiro em decimal para outra base.
  * Autor: Philippe Matias
  */
 
