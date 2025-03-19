@@ -39,11 +39,24 @@ namespace pm
         {
             //é muito mais eficiente pois usa menos alocações de memória em tempo de execução.
             if (is_capacity_full()) {
-                m_capacity += Min_Cap; //pode melhorar fazendo o crescimento ser exponencial
+                m_capacity *= 2; //pode melhorar fazendo o crescimento ser exponencial
                 this->reserve(m_capacity);
             }
 
             m_data[m_size++] = item;
+        }
+
+        /*----------------------------------*/
+        void preppend(const T& item)
+        {
+            if (is_capacity_full()) {
+                m_capacity *= 2;
+                this->reserve(m_capacity);
+            }
+
+            this->right_shift();
+            m_data[0] = item;
+            m_size++;
         }
 
         /*----------------------------------*/
@@ -63,6 +76,14 @@ namespace pm
         /*----------------------------------*/
         size_t size() const { return m_size; } //O(1)
         bool is_empty() const { return (m_size == 0); } //O(1)
+
+    private:
+        /*----------------------------------*/
+        void right_shift(size_t start_position = 0) {
+            for (size_t i = m_size; i > start_position; --i) {
+                m_data[i] = m_data[i-1];
+            }
+        }
 
         /*----------------------------------*/
         void reserve(size_t capacity)
