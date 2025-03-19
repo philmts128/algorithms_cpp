@@ -6,17 +6,20 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
+#include <iostream>
 
 
 namespace pm
 {
     /*----------------------------------*/
     template <typename T>
-    class vector
+    class vector final
     {
     private:
         /*----------------------------------*/
-        static constexpr int Min_Cap { 64 };
+        static constexpr size_t Min_Cap { 64 };
+        static constexpr size_t Not_Found { (size_t)(-1) };
         T* m_data { nullptr };
         size_t m_size { 0 };
         size_t m_capacity { Min_Cap };
@@ -25,6 +28,11 @@ namespace pm
         /*----------------------------------*/
         vector() {
             this->reserve(m_capacity);
+        }
+
+        /*----------------------------------*/
+        vector(const pm::vector<T>& vec) {
+            this->copy_data(vec);
         }
 
         /*----------------------------------*/
@@ -47,16 +55,73 @@ namespace pm
         }
 
         /*----------------------------------*/
-        void preppend(const T& item)
+        void insert(const T& item, size_t position)
         {
-            if (is_capacity_full()) {
+            if (position >= m_size) //size_t é sempre maior ou igual que zero
+                return;
+
+            if (this->is_capacity_full()) {
                 m_capacity *= 2;
                 this->reserve(m_capacity);
             }
 
-            this->right_shift();
-            m_data[0] = item;
+            this->right_shift(position);
+            m_data[position] = item;
             m_size++;
+        }
+
+        /*----------------------------------*/
+        void preppend(const T& item)
+        {
+            if (this->is_empty()) {
+                this->append(item);
+            } else {
+                this->insert(item, 0);
+            }
+        }
+
+        /*----------------------------------*/
+        void remove(const size_t position)
+        {
+            if (this->is_empty())
+                return;
+            this->left_shift(position);
+            m_size--;
+
+            if (m_size <= m_capacity/4)
+                this->shrink();
+        }
+
+        /*----------------------------------*/
+        void remove_back() { //tempo é O(1) amortizado e O(n) no pior caso
+            if (this->is_empty())
+                return;
+            m_size--;
+
+            if (m_size <= m_capacity/4)
+                this->shrink();
+        }
+
+        /*----------------------------------*/
+        void remove_front() //tempo é sempre O(n) pois elementos serão deslocados
+        {
+            this->remove(0);
+        }
+
+        /*----------------------------------*/
+        size_t search(const T& value) //O(n)
+        {
+            for (size_t i = 0; i < m_size; ++i) {
+                if (m_data[i] == value) {
+                    return i;
+                }
+            }
+            return Not_Found;
+        }
+
+        /*----------------------------------*/
+        bool exists(const T& value) const {
+            return this->search(value) != Not_Found;
         }
 
         /*----------------------------------*/
@@ -69,19 +134,58 @@ namespace pm
         }
 
         /*----------------------------------*/
+        auto at(const size_t index) -> const T& { //O(1)
+            return m_data[index];
+        }
+
+        /*----------------------------------*/
+        auto operator = (const pm::vector<T>& vec) -> pm::vector<T>& {
+            this->copy_data(vec);
+            return *this;
+        }
+
+        /*----------------------------------*/
+        bool operator == (const pm::vector<T>& vec) const { //O(n)
+            if (m_size != vec.m_size)
+                return false;
+
+            for (int i = 0; i < m_size; ++i) {
+                if (m_data[i] != vec.m_data[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /*----------------------------------*/
+        bool operator != (const pm::vector<T>& vec) const {
+            return !(*this == vec);
+        }
+
+        /*----------------------------------*/
         auto operator [] (const size_t index) -> T& { //O(1)
             return m_data[index];
         }
 
         /*----------------------------------*/
         size_t size() const { return m_size; } //O(1)
+        size_t capacity() const  { return m_capacity; } //O(1)
         bool is_empty() const { return (m_size == 0); } //O(1)
 
     private:
         /*----------------------------------*/
-        void right_shift(size_t start_position = 0) {
+        void right_shift(size_t start_position = 0) { //O(n-s)
             for (size_t i = m_size; i > start_position; --i) {
                 m_data[i] = m_data[i-1];
+            }
+        }
+
+        /*----------------------------------*/
+        void left_shift(size_t start_position = 0) {
+            auto sp = start_position;
+            for (; sp < m_size-1; ++sp) {
+                m_data[sp] = m_data[sp+1];
             }
         }
 
@@ -104,6 +208,36 @@ namespace pm
 
             delete[] m_data;
             m_data = temp;
+        }
+
+        /*----------------------------------*/
+        size_t calc_capacity(size_t size)
+        {
+            if (size <= Min_Cap) {
+                return Min_Cap;
+            } else {
+                double exp = log(size)/log(2.0);
+                return pow(2.0, ceil(exp)+1);
+            }
+        }
+
+        /*----------------------------------*/
+        void shrink()
+        {
+            m_capacity = this->calc_capacity(m_size);
+            this->reserve(m_capacity);
+        }
+
+        /*----------------------------------*/
+        void copy_data(const pm::vector<T>& vec) //O(vec.m_size)
+        {
+            m_capacity = this->calc_capacity(m_size);
+            m_size = vec.m_size;
+
+            if (m_data) delete[] m_data;
+            m_data = new T[m_capacity];
+            for (size_t i = 0; i < m_size; ++i)
+                m_data[i] = vec.m_data[i];
         }
 
         /*----------------------------------*/ //O(1)
