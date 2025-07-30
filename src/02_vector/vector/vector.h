@@ -9,6 +9,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "vector_iterator.h"
+
 
 namespace pm
 {
@@ -221,9 +223,12 @@ namespace pm
         }
 
         /*----------------------------------*/
-        size_t size() const { return m_size; } //O(1)
-        size_t capacity() const  { return m_capacity; } //O(1)
-        bool is_empty() const { return (m_size == 0); } //O(1)
+        size_t size()     const { return  m_size; } //O(1)
+        size_t capacity() const { return  m_capacity; } //O(1)
+        bool is_empty()   const { return (m_size == 0); } //O(1)
+        vector_iterator<T> begin() { return  { m_data }; }
+        vector_iterator<T> end()   { return  { &m_data[m_size] }; }
+
 
     private:
         /*----------------------------------*/
