@@ -1,7 +1,6 @@
 #pragma once
 
 
-
 namespace pm {
     template <typename T>
     class simply_linked_list;

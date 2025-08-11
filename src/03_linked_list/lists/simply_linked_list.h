@@ -7,20 +7,10 @@
 
 #include <cstdint>
 #include <iostream> //for debugging purposes
+
+#include "simply_linked_list_node.h"
 #include "simply_linked_list_iterator.h"
 
-
-namespace pm
-{
-    template <typename T>
-    struct simply_linked_list_node
-    {
-        T data;
-        simply_linked_list_node* next { nullptr };
-        simply_linked_list_node() {}
-        simply_linked_list_node(const T& data) : data(data) {}
-    };
-}
 
 
 namespace pm
@@ -42,7 +32,7 @@ namespace pm
         }
 
         /*-----------------------------------------------------*/
-        simply_linked_list(const simply_linked_list<T>& other) {
+        simply_linked_list(const simply_linked_list<T>& other) { //O(other.m_size)
             this->copy_data(other);
         }
 
@@ -57,7 +47,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        simply_linked_list(simply_linked_list<T>&& other)
+        simply_linked_list(simply_linked_list<T>&& other) //O(1)
         {
             this->clear();
 
@@ -70,13 +60,13 @@ namespace pm
         }
 
         /*-----------------------------------------------------*/
-        ~simply_linked_list() {
+        ~simply_linked_list() { //O(1)
             this->clear();
         }
 
 
         /*-----------------------------------------------------*/
-        void append(const T& data)
+        void append(const T& data) //O(1)
         {
             auto new_node = new simply_linked_list_node<T>(data);
 
@@ -93,7 +83,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        void preppend(const T& data)
+        void preppend(const T& data) //O(1)
         {
             auto new_node = new simply_linked_list_node<T>(data);
 
@@ -110,7 +100,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        void remove_front() //verificar o last!
+        void remove_front() //O(1)
         {
             if (this->is_empty())
                 return;
@@ -124,7 +114,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        void remove_back()
+        void remove_back() //O(n)
         {
             if (this->is_empty())
                 return;
@@ -148,18 +138,18 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        auto begin() -> simply_linked_list_iterator<T> {
+        auto begin() -> simply_linked_list_iterator<T> { //O(1)
             return { m_first };
         }
 
 
         /*-----------------------------------------------------*/
-        auto end() -> simply_linked_list_iterator<T> {
+        auto end() -> simply_linked_list_iterator<T> { //O(1)
             return { nullptr };
         }
 
         /*-----------------------------------------------------*/
-        void clear()
+        void clear() //O(n)
         {
             if (m_first == nullptr || m_last == nullptr)
                 return;
@@ -177,7 +167,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        bool operator == (const simply_linked_list<T>& other) const
+        bool operator == (const simply_linked_list<T>& other) const //O(n)
         {
             if (this->size() != other.size())
                 return false;
@@ -197,7 +187,7 @@ namespace pm
 
 
         /*-----------------------------------------------------*/
-        bool operator != (const simply_linked_list<T>& other) const {
+        bool operator != (const simply_linked_list<T>& other) const { //O(n)
             return !(*this == other);
         }
 
@@ -205,13 +195,13 @@ namespace pm
         /*-----------------------------------------------------*/
         auto operator = (const simply_linked_list<T>& other) -> simply_linked_list<T>&
         {
-            this->copy_data(other);
+            this->copy_data(other); //O(n)
             return *this;
         }
 
 
         /*-----------------------------------------------------*/
-        size_t size()    const { return m_size; }
+        size_t size()    const { return m_size; } //O(1), pra esse e os 3 abaixo
         bool is_empty()  const { return size() == 0; }
         T first() const  { return m_first->data; }
         T last()  const  { return m_last->data; }
@@ -249,7 +239,7 @@ namespace pm
 
     private:
         /*-----------------------------------------------------*/
-        void copy_data(const simply_linked_list<T>& other)
+        void copy_data(const simply_linked_list<T>& other) //O(n)
         {
             this->clear();
 
