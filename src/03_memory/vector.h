@@ -20,7 +20,7 @@ namespace pm
     {
     private:
         /*----------------------------------*/
-        static constexpr size_t Min_Cap { 64 };
+        static constexpr size_t Min_Cap { 128 };
         static constexpr size_t Not_Found { (size_t)(-1) };
         T* m_data { nullptr };
         size_t m_size { 0 };
