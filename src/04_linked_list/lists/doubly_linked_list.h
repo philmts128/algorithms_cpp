@@ -86,12 +86,13 @@ namespace pm
         /*-------------------------------------*/
         void preppend(const T& item) //O(1)
         {
-            auto new_node =
-                new doubly_linked_list_node<T>(item);
+            auto new_node = new doubly_linked_list_node<T>(item);
 
-            new_node->prev = m_sentinel;
-            new_node->next = m_sentinel->next;
+            auto temp = m_sentinel->next;
             m_sentinel->next = new_node;
+            new_node->next = temp;
+            new_node->prev = m_sentinel;
+            temp->prev = new_node;
 
             m_size += 1;
         }
@@ -131,8 +132,8 @@ namespace pm
         /*-----------------------------------------------------*/
         size_t size()   const { return m_size; } //O(1)
         bool is_empty() const { return size() == 0; }
-        T first()       const { return m_sentinel->prev->data; }
-        T last()        const { return m_sentinel->next->data; }
+        T first()       const { return m_sentinel->next->data; }
+        T last()        const { return m_sentinel->prev->data; }
 
         /*-----------------------------------------------------*/
         auto begin() -> doubly_linked_list_iterator<T> { return m_sentinel->next; }

@@ -1,9 +1,26 @@
 #include <iostream>
 #include <string>
-#include <ctime>
 using namespace std;
 
 #include "stack.h"
+
+void string_test()
+{
+    pm::stack<string> sl;
+    string langs[]  { "java", "python", "c++", "go" };
+
+    cout << "\n\npush: ";
+    for (string s : langs) {
+        cout << s << " - ";
+        sl.push(s);
+    }
+
+    cout << "\npop: ";
+    while (!sl.is_empty()) {
+        cout << sl.top() << " - ";
+        sl.pop();
+    }
+}
 
 void int_test()
 {
@@ -26,6 +43,7 @@ void int_test()
 int main()
 {
     int_test();
+    string_test();
 
     printf("\n\n");
     return 0;
